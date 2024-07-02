@@ -4,10 +4,14 @@ interface Url {
     qrCode: string;
   }
   
-  const urlArr: Url[] = [];
+  export const urlArr: Url[] = [{
+    originalUrl: "testing-out-this-temp-db",
+    shortUrl: "00be88-298fflsk-3",
+    qrCode: "images/png/2983jslkjdfknsdf-s;ldkjfkwen/;skdjfl"
+  }];
   
   export const addUrl = (url: Url) => {
-    urlArr.push(url);
+    return urlArr.push(url);
   }
   
   export const getUrls = () => {

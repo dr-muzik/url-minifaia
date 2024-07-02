@@ -1,4 +1,4 @@
-import { addUrl } from '@/app/lib/urlStorage';
+import { addUrl, getUrls } from '@/app/lib/urlStorage';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { NextRequest ,NextResponse } from 'next/server';
 // import dbConnect from '../../lib/dbConnect';
@@ -17,7 +17,7 @@ interface UrlRequest extends NextApiRequest {
 export const POST = async (req: Request) => {
     // const urlArr = []
 
-  const { originalUrl } = await req.json();
+  const { originalUrl} = await req.json();
   console.log(originalUrl)
   const shortUrl = uuidv4().substring(0, 16);
   const qrCode = await QRCode.toDataURL(`${req.headers}/${shortUrl}`);
@@ -29,7 +29,9 @@ export const POST = async (req: Request) => {
     qrCode,
   };
 
-  addUrl(newUrl)
+  addUrl(newUrl);
+
+  // console.log(getUrls())
 
 
 //   await newUrl.save();
