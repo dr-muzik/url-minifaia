@@ -1,3 +1,5 @@
+// import mysql from 'mysql'
+import mysql from 'mysql2';
 interface Url {
     originalUrl: string;
     shortUrl: string;
@@ -17,3 +19,17 @@ interface Url {
   export const getUrls = () => {
     return urlArr;
   }
+
+// export const pool = mysql.createConnection({
+//     host: process.env.MYSQL_HOST,
+//     user: process.env.MYSQL_USER,
+//     password: process.env.MYSQL_PW,
+//     database: process.env.MYSQL_DB
+// })
+
+export const pool = mysql.createConnection({
+  host: "127.0.0.1",
+  user: "root",
+  password: "$drmuz1kTrump",
+  database: "url_shortner"
+})

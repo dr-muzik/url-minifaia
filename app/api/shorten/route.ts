@@ -1,6 +1,7 @@
-import { addUrl, getUrls } from '@/app/lib/urlStorage';
+import { addUrl, getUrls, pool } from '@/app/lib/urlStorage';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { NextRequest ,NextResponse } from 'next/server';
+import { resolve } from 'path';
 // import dbConnect from '../../lib/dbConnect';
 // import Url from '../../models/Url';
 // import shortid from 'shortid';
@@ -14,44 +15,82 @@ interface UrlRequest extends NextApiRequest {
 }
 
 
-export const POST = async (req: Request) => {
-    // const urlArr = []
 
-  const { originalUrl} = await req.json();
+export const POST = async (req: Request) => {
+ 
+  const { originalUrl } = await req.json();
   console.log(originalUrl)
   const shortUrl = uuidv4().substring(0, 16);
   const qrCode = await QRCode.toDataURL(`${req.headers}/${shortUrl}`);
 
-  
-  const newUrl = {
-    originalUrl,
-    shortUrl,
-    qrCode,
-  };
+  try {
+    const query = `
+      INSERT INTO new_table (originalUrl, shortUrl) VALUE (?, ?) 
+    `;
+    const value = [originalUrl, shortUrl]
+    const result = await new Promise((resolve, reject) => {
+      pool.query(query, value, (err, results: [])=> {
+        if(err)
+          reject(err);
+        else
+          resolve(results);
+      });
+    });
 
-  addUrl(newUrl);
+    console.log("result from post: ", result);
 
-  // console.log(getUrls())
-
-
-//   await newUrl.save();
-
-  // res.status(201).json({ shortUrl,qrCode });
-  if(!originalUrl) 
     return NextResponse.json({
-      error: "required field not found",
-      ok: false,
-      status: 400
-  })
-
-  return NextResponse.json(
-    { message: 'Successfully delivered',
       ok: true,
-      shortUrl,
-      qrCode
-     },
-     {
-      status: 201,}
-  )
+      message: "success",
+      urls: {
+        originalUrl,
+        qrCode,
+        shortUrl
+    }
+    },{status: 201});
+  } catch (err) {
+    console.error("Database query failed:", err);
+    return NextResponse.json({
+      ok: false,
+      message: "Database query failed",
+    }, {status: 500});
+  }
+
+}
+
+
+
+export const GET = async (req: Request) => {
+
+  try {
+    const query = `
+      SELECT * FROM new_table 
+    `;
+
+    const result = await new Promise((resolve, reject) => {
+      pool.query(query, (err, results: [])=> {
+        if(err)
+          reject(err);
+        else
+          resolve(results);
+      });
+    });
+    // const originalUrl = result.rows[0]?.original_url;
+
+    console.log("result from query: ", result);
+
+    return NextResponse.json({
+      ok: true,
+      message: "success",
+      // originalUrl: originalUrl, 
+    });
+  } catch (err) {
+    console.error("Database query failed:", err);
+    return NextResponse.json({
+      ok: false,
+      message: "Database query failed",
+    });
+  }
+
 }
 
