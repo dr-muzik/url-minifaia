@@ -30,8 +30,8 @@ const Home = () => {
     // console.log("shorturl: ", returned?.shortUrl)
     console.log("location: ", window.location.origin)
     
-    setShortUrl(`${window.location.origin}/api/shorten/${returned?.shortUrl}`);
-    setQrCode(returned.qrCode!);
+    setShortUrl(`http://${returned?.shortUrl}`);
+    setQrCode(returned?.qrCode!);
     if(res.ok)
       alert('url successfully sent!');
       
@@ -42,15 +42,17 @@ const Home = () => {
 
   };
 
-const handleUrl = async() => {
-  let res = await fetch(`/api/shorten/${shortUrl}`, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-  });
+// const handleUrl = async() => {
+//   const response = await fetch(`/api/shorten/${shortUrl}`);
   
-  res = await res.json();
-  console.log("res: ", res);
-}
+
+//   if(response.ok){
+//     const res = await response.json();
+//     console.log("res: ", res);
+//   }
+//   else
+//     console.log("error fetching url")
+// }
 
   return (
     <div className="px-96 flex justify-center flex-col align-middle  w-full mt-10">
@@ -73,7 +75,7 @@ const handleUrl = async() => {
       <div className="border-2 border-black p-10 flex place-content-center">
         {shortUrl.length > 0 && checker === "url" ? 
         (
-          <a href={shortUrl} className="italic text-blue-800 font-serif" onClick={handleUrl}>{shortUrl}</a>
+          <a href={originalUrl} className="italic text-blue-800 font-serif" target="_blank">{shortUrl}</a>
           ): qrCode.length >0 && checker === "qr" &&
           (
             <img src={qrCode} alt="QR Code" />

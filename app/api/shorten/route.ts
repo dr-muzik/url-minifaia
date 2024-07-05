@@ -21,7 +21,8 @@ export const POST = async (req: Request) => {
   const { originalUrl } = await req.json();
   console.log(originalUrl)
   const shortUrl = uuidv4().substring(0, 16);
-  const qrCode = await QRCode.toDataURL(`${req.headers}/${shortUrl}`);
+  // const qrCode = await QRCode.toDataURL(`${req.headers}/${originalUrl}`);
+  const qrCode = await QRCode.toDataURL(`${originalUrl}`);
 
   try {
     const query = `
@@ -42,11 +43,9 @@ export const POST = async (req: Request) => {
     return NextResponse.json({
       ok: true,
       message: "success",
-      urls: {
         originalUrl,
         qrCode,
         shortUrl
-    }
     },{status: 201});
   } catch (err) {
     console.error("Database query failed:", err);

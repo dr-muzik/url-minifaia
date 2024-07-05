@@ -41,9 +41,9 @@ try {
     return NextResponse.json({
       ok: true,
       message: "success",
-      
+      originalUrl
       // originalUrl: originalUrl, 
-      });
+      }, {status: 200});
     // redirect(originalUrl);
   } catch (err) {
     console.error("Database query failed:", err);
